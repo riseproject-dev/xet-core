@@ -73,6 +73,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libssl-dev pkg-config git-lfs cmake
           git lfs install
+      - name: Cache Rust artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: xet-riscv64-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            xet-riscv64-cargo-
       - name: Build and Test
         run: |
           cargo test --verbose --no-fail-fast
