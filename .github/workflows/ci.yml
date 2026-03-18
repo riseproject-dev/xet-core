@@ -59,6 +59,26 @@ jobs:
         run: |
           # the build and test steps would update Cargo.lock if it is out of date
           test -z "$(git status --porcelain Cargo.lock)" || (echo "Cargo.lock has uncommitted changes!" && exit 1)
+  build_and_test-linux-riscv64:
+    runs-on: ubuntu-24.04-riscv
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.89.0
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssl-dev pkg-config git-lfs cmake
+          git lfs install
+      - name: Build and Test
+        run: |
+          cargo test --verbose --no-fail-fast
+      - name: Build and Test hf_xet
+        run: |
+          cd hf_xet && cargo test --verbose --no-fail-fast
   build_and_test-win:
     runs-on: windows-latest
     steps:
