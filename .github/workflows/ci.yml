@@ -66,13 +66,15 @@ jobs:
         uses: actions/checkout@v6
       - name: Install Rust
         run: |
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.cargo/bin:$PATH"
           if command -v rustup &> /dev/null; then
-            rustup install 1.89.0 --no-self-update
+            rustup install 1.89.0
             rustup default 1.89.0
           else
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.89.0
+            export PATH="$HOME/.cargo/bin:$PATH"
           fi
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
           rustc --version
       - name: Install system dependencies
         run: |
